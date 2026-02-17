@@ -1,4 +1,16 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/Solution Items/specs/">
+    <File Path="../../specs/API.CONTRACTS.md" />
+    <File Path="../../specs/ARCHITECTURE.md" />
+    <File Path="../../specs/CONVENTIONS.md" />
+    <File Path="../../specs/DB_SCHEMA.md" />
+    <File Path="../../specs/PROGRESS.md" />
+    <File Path="../../specs/PROJECT.md" />
+  </Folder>
   <Project Path="FourLivingStory.ApiService/FourLivingStory.ApiService.csproj" />
   <Project Path="FourLivingStory.AppHost/FourLivingStory.AppHost.csproj" />
   <Project Path="FourLivingStory.ServiceDefaults/FourLivingStory.ServiceDefaults.csproj" />
