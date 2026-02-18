@@ -1,32 +1,41 @@
 # Progress
 
-## Status: Planning
+## Status: Infrastructure complete — ready for feature implementation
 
 ## Completed
 - [x] .NET Aspire project scaffold (AppHost, ApiService, Web, ServiceDefaults, Tests)
-- [x] Redis output caching configured on Web
 - [x] OpenTelemetry and health checks via ServiceDefaults
 - [x] `specs/` folder and project documentation initialized
 - [x] Domain defined (see PROJECT.md)
-- [x] Architecture decided (Blazor WASM, PostgreSQL + EF Core, Logto auth)
-- [x] DB schema designed — characters, items, inventory, equipment, enhancement, tasks, expenses (see DB_SCHEMA.md)
+- [x] Architecture decided (Blazor WASM hosted, PostgreSQL + EF Core, Logto auth)
+- [x] DB schema designed (see DB_SCHEMA.md)
 - [x] API contracts designed (see API.CONTRACTS.md)
 - [x] Feature list created (see FEATURES.md)
 - [x] Character classes/races/weapon restrictions documented (see features/character.md)
 - [x] Item enhancement system documented (see features/items.md)
+- [x] Modular monolith architecture defined (see MODULES.md)
+- [x] PostgreSQL + EF Core wired up (AppDbContext, Aspire.Npgsql.EntityFrameworkCore.PostgreSQL)
+- [x] In-process event bus (IEventBus / IEventHandler<T> / InMemoryEventBus)
+- [x] All 8 modules scaffolded: Identity, Character, Inventory, Tasks, Expenses, Rewards, Notifications, Scheduler
+- [x] JWT Bearer auth configured in ApiService (Logto OIDC)
+- [x] SSE notifications (NotificationHub singleton, GET /notifications/stream)
+- [x] Daily reset cron job (DailyResetJob BackgroundService)
+- [x] RewardCalculator (stateless singleton, difficulty tiers, overachievement bonus)
+- [x] Blazor WASM hosted setup: Web.Client (WASM) + Web (thin host)
+- [x] OIDC/PKCE auth configured in Web.Client (Logto)
+- [x] Dynamic ApiService URL discovery via GET /_config
 
 ## In Progress
-- [ ] Infrastructure setup
+- [ ] Logto credentials (Authority + ClientId) — fill in appsettings once Logto app is created
 
 ## Backlog
 See FEATURES.md for full feature tracking.
 
 ### Recommended Implementation Order
-1. Switch Web to Blazor WASM
-2. Add PostgreSQL + EF Core to ApiService (Npgsql, migrations)
-3. Integrate Logto into Web (OIDC login) and ApiService (JWT validation)
-4. Seed item catalog
-5. Character creation + character sheet UI
+1. Configure Logto (create app, fill in Authority + ClientId in appsettings)
+2. Switch EnsureCreatedAsync → MigrateAsync + add first EF Core migration
+3. Seed item catalog
+4. Character creation + character sheet UI
 6. Leveling system
 7. Inventory + equipment slots
 8. Enhancement system
