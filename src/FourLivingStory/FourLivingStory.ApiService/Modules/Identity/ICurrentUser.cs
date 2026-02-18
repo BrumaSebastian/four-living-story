@@ -1,0 +1,7 @@
+namespace FourLivingStory.ApiService.Modules.Identity;
+
+public interface ICurrentUser
+{
+    string UserId { get; }
+    bool IsAuthenticated { get; }
+}

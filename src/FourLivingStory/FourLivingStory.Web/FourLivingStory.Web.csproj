@@ -8,10 +8,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FourLivingStory.ServiceDefaults\FourLivingStory.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\FourLivingStory.Web.Client\FourLivingStory.Web.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
   </ItemGroup>
 
 </Project>

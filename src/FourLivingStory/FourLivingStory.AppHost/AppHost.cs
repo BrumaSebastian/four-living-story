@@ -1,15 +1,19 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var cache = builder.AddRedis("cache");
+var postgres = builder.AddPostgres("postgres")
+    .WithPgAdmin();
+
+var db = postgres.AddDatabase("fourlivingstory");
 
 var apiService = builder.AddProject<Projects.FourLivingStory_ApiService>("apiservice")
-    .WithHttpHealthCheck("/health");
+    .WithHttpsEndpoint(port: 7001, name: "https")
+    .WithHttpHealthCheck("/health")
+    .WithReference(db)
+    .WaitFor(db);
 
 builder.AddProject<Projects.FourLivingStory_Web>("webfrontend")
     .WithExternalHttpEndpoints()
     .WithHttpHealthCheck("/health")
-    .WithReference(cache)
-    .WaitFor(cache)
     .WithReference(apiService)
     .WaitFor(apiService);
 

@@ -16,4 +16,5 @@
   <Project Path="FourLivingStory.ServiceDefaults/FourLivingStory.ServiceDefaults.csproj" />
   <Project Path="FourLivingStory.Tests/FourLivingStory.Tests.csproj" />
   <Project Path="FourLivingStory.Web/FourLivingStory.Web.csproj" />
+  <Project Path="FourLivingStory.Web.Client/FourLivingStory.Web.Client.csproj" />
 </Solution>

@@ -1,47 +1,94 @@
+using FourLivingStory.ApiService.Infrastructure.Database;
+using FourLivingStory.ApiService.Infrastructure.EventBus;
+using FourLivingStory.ApiService.Modules.Character;
+using FourLivingStory.ApiService.Modules.Expenses;
+using FourLivingStory.ApiService.Modules.Identity;
+using FourLivingStory.ApiService.Modules.Inventory;
+using FourLivingStory.ApiService.Modules.Notifications;
+using FourLivingStory.ApiService.Modules.Rewards;
+using FourLivingStory.ApiService.Modules.Scheduler;
+using FourLivingStory.ApiService.Modules.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add service defaults & Aspire client integrations.
+// ── Aspire ────────────────────────────────────────────────────────────────────
 builder.AddServiceDefaults();
 
-// Add services to the container.
+// ── Database ──────────────────────────────────────────────────────────────────
+builder.AddNpgsqlDbContext<AppDbContext>("fourlivingstory");
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = builder.Configuration["Logto:Authority"];
+        options.Audience  = builder.Configuration["Logto:Audience"];
+        options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
+    });
+
+builder.Services.AddAuthorization();
+
+// ── CORS ──────────────────────────────────────────────────────────────────────
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? [];
+
+builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials()));
+
+// ── Event Bus ─────────────────────────────────────────────────────────────────
+builder.Services.AddScoped<IEventBus, InMemoryEventBus>();
+
+// ── Modules ───────────────────────────────────────────────────────────────────
+builder.Services
+    .AddIdentityModule()
+    .AddCharacterModule()
+    .AddInventoryModule()
+    .AddTasksModule()
+    .AddExpensesModule()
+    .AddRewardsModule()
+    .AddNotificationsModule()
+    .AddSchedulerModule();
+
+// ── API docs ──────────────────────────────────────────────────────────────────
+builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// ─────────────────────────────────────────────────────────────────────────────
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ── Database init ─────────────────────────────────────────────────────────────
+// TODO: replace with MigrateAsync() once EF Core migrations are in place.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.EnsureCreatedAsync();
+}
+
+// ── Middleware ────────────────────────────────────────────────────────────────
 app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
-{
     app.MapOpenApi();
-}
 
-string[] summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
+app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.MapGet("/", () => "API service is running. Navigate to /weatherforecast to see sample data.");
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
+// ── Endpoints ─────────────────────────────────────────────────────────────────
 app.MapDefaultEndpoints();
 
-app.Run();
+app.MapNotificationsModule()
+   .MapCharacterModule()
+   .MapInventoryModule()
+   .MapTasksModule()
+   .MapExpensesModule();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+app.Run();

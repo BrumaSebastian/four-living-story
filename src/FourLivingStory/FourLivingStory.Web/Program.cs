@@ -1,42 +1,42 @@
-using FourLivingStory.Web;
 using FourLivingStory.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add service defaults & Aspire client integrations.
+// ── Aspire ────────────────────────────────────────────────────────────────────
 builder.AddServiceDefaults();
-builder.AddRedisOutputCache("cache");
 
-// Add services to the container.
+// ── Blazor WASM host ──────────────────────────────────────────────────────────
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddHttpClient<WeatherApiClient>(client =>
-    {
-        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
-        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
-        client.BaseAddress = new("https+http://apiservice");
-    });
+// ── API URL discovery ─────────────────────────────────────────────────────────
+// The WASM client reads this endpoint at startup to discover the ApiService URL.
+var apiServiceUrl = builder.Configuration["services:apiservice:https:0"]
+    ?? builder.Configuration["services:apiservice:http:0"]
+    ?? "https://localhost:7001";
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
 app.UseAntiforgery();
-
-app.UseOutputCache();
 
 app.MapStaticAssets();
 
+// Exposes ApiService URL to the WASM client.
+app.MapGet("/_config", () => new { ApiServiceUrl = apiServiceUrl })
+    .WithName("GetClientConfig");
+
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveWebAssemblyRenderMode()
+    .AddAdditionalAssemblies(typeof(FourLivingStory.Web.Client._Imports).Assembly);
 
 app.MapDefaultEndpoints();
 
