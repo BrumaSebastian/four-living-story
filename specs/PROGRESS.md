@@ -45,3 +45,9 @@ See FEATURES.md for full feature tracking.
 - **Enhancement system**: 4Story-accurate — +0 to +28, item destruction on failure, protection scrolls
 - **Classes**: Warrior, Archer, Magician, Priest, Evocator
 - **Races**: Human, Feline, Fairy
+- **Backend structure**: Modular monolith — 8 modules (Identity, Character, Inventory, Tasks, Expenses, Rewards, Notifications, Scheduler)
+- **No MediatR, no repository pattern**: services use EF Core directly, endpoints use Minimal API
+- **Event bus**: in-process synchronous IEventBus for cross-module communication
+- **SSE**: Notifications module manages Server-Sent Events for real-time push
+- **Cron jobs**: Scheduler module uses IHostedService + PeriodicTimer (no Quartz.NET)
+- **DB schemas**: one PostgreSQL schema per module; no cross-schema FK constraints

@@ -55,7 +55,10 @@ Tracks all planned features, their status, and links to individual specs.
 
 | # | Feature | Status | Spec |
 |---|---|---|---|
-| 23 | PostgreSQL + EF Core setup with migrations | `[ ]` | — |
+| 23 | PostgreSQL + EF Core setup with per-module schemas | `[ ]` | `MODULES.md` |
 | 24 | Switch Web project to Blazor WASM | `[ ]` | — |
 | 25 | Logto OIDC integration (Web login + API JWT validation) | `[ ]` | — |
 | 26 | Seed item catalog | `[ ]` | `features/items.md` |
+| 27 | In-process event bus (IEventBus + IEventHandler<T>) | `[ ]` | `MODULES.md` |
+| 28 | SSE endpoint + NotificationHub | `[ ]` | `MODULES.md` |
+| 29 | Scheduler module + DailyResetJob | `[ ]` | `MODULES.md` |
