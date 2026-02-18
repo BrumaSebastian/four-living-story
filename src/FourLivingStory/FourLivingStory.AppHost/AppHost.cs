@@ -6,7 +6,6 @@ var postgres = builder.AddPostgres("postgres")
 var db = postgres.AddDatabase("fourlivingstory");
 
 var apiService = builder.AddProject<Projects.FourLivingStory_ApiService>("apiservice")
-    .WithHttpsEndpoint(port: 7001, name: "https")
     .WithHttpHealthCheck("/health")
     .WithReference(db)
     .WaitFor(db);
