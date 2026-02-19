@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FourLivingStory.ApiService\FourLivingStory.ApiService.csproj" />
-    <ProjectReference Include="..\FourLivingStory.Web.Client\FourLivingStory.Web.Client.csproj" />
     <ProjectReference Include="..\FourLivingStory.Web\FourLivingStory.Web.csproj" />
   </ItemGroup>
 

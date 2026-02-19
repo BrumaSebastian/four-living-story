@@ -4,7 +4,7 @@
     "https": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "applicationUrl": "https://fourlivingstory.dev.localhost:17205;http://fourlivingstory.dev.localhost:15071",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
@@ -17,7 +17,7 @@
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "applicationUrl": "http://fourlivingstory.dev.localhost:15071",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
