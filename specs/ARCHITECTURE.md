@@ -11,6 +11,7 @@
 | `FourLivingStory.Application` | App services, ports (`IEventBus`), module discovery, domain services |
 | `FourLivingStory.Infrastructure` | EF Core (`AppDbContext`), Wolverine event bus, PostgreSQL outbox |
 | `FourLivingStory.ApiService` | HTTP composition root — Minimal API endpoints, `Program.cs` |
+| `FourLivingStory.Gateway` | YARP reverse proxy — single public entry point (non-dev only) |
 | `FourLivingStory.Web` | Thin Blazor WASM host — serves client app, exposes `/_config` |
 | `FourLivingStory.Web.Client` | Blazor WASM app — all pages and UI components |
 | `FourLivingStory.ServiceDefaults` | Shared defaults — OpenTelemetry, health checks, resilience |
@@ -100,6 +101,7 @@ See `specs/MODULES.md` for the full module breakdown, event catalog, and DB sche
 - **EF Core**: Standard ORM for .NET; integrates cleanly with Aspire and Npgsql.
 - **Modular monolith**: Single deployable unit. Modules are isolated — no direct service-to-service calls across module boundaries. Cross-module communication uses the event bus.
 - **No MediatR, no repository pattern**: Minimal API endpoints call module services directly. EF Core DbContext is used directly inside services.
+- **YARP gateway (non-dev only)**: Single public ingress in production. Routes `/api/*` to ApiService (strips prefix) and `/*` to Web. Not started in Development — Aspire exposes Web directly instead. Eliminates CORS and `/_config` concerns in production.
 - **Wolverine event bus with PostgreSQL outbox**: Messages are written to the outbox atomically with `SaveChangesAsync()`. No phantom events on transaction rollback. Handler discovery is convention-based — any class with a `HandleAsync` method is automatically registered.
 - **IEventBus abstraction**: Application layer exposes `IEventBus` (our port). Infrastructure implements it via `WolverineEventBus` wrapping `IMessageBus`. Application stays framework-agnostic.
 - **Async event bus**: `IEventBus.PublishAsync` returns `ValueTask`; handlers can be fully async.

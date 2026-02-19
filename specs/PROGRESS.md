@@ -26,6 +26,7 @@
 - [x] IEventBus / IEventHandler ports in Application; WolverineEventBus adapter in Infrastructure
 - [x] Async event bus (IEventBus.PublishAsync returns ValueTask)
 - [x] TimeProvider injected into DailyResetJob (testable, no DateTime.UtcNow)
+- [x] YARP gateway (FourLivingStory.Gateway) — non-dev only, routes /api/* → ApiService and /* → Web
 - [x] Blazor WASM hosted setup: Web.Client (WASM) + Web (thin host)
 - [x] OIDC/PKCE auth configured in Web.Client (Logto)
 - [x] Dynamic ApiService URL discovery via GET /_config
