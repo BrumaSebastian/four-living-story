@@ -1,24 +1,18 @@
-using FourLivingStory.ApiService.Infrastructure.Database;
-using FourLivingStory.ApiService.Infrastructure.EventBus;
-using FourLivingStory.ApiService.Modules.Character;
-using FourLivingStory.ApiService.Modules.Expenses;
-using FourLivingStory.ApiService.Modules.Identity;
-using FourLivingStory.ApiService.Modules.Inventory;
-using FourLivingStory.ApiService.Modules.Notifications;
-using FourLivingStory.ApiService.Modules.Rewards;
-using FourLivingStory.ApiService.Modules.Scheduler;
-using FourLivingStory.ApiService.Modules.Tasks;
+using System.Reflection;
+using FourLivingStory.Application;
+using FourLivingStory.Domain;
+using FourLivingStory.Infrastructure;
+using FourLivingStory.Infrastructure.Database;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Wolverine;
+using Wolverine.EntityFrameworkCore;
+using Wolverine.Postgresql;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Aspire ────────────────────────────────────────────────────────────────────
 builder.AddServiceDefaults();
-
-// ── Database ──────────────────────────────────────────────────────────────────
 builder.AddNpgsqlDbContext<AppDbContext>("fourlivingstory");
 
-// ── Auth ──────────────────────────────────────────────────────────────────────
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -27,68 +21,55 @@ builder.Services
         options.Audience  = builder.Configuration["Logto:Audience"];
         options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
     });
-
 builder.Services.AddAuthorization();
 
-// ── CORS ──────────────────────────────────────────────────────────────────────
-var allowedOrigins = builder.Configuration
-    .GetSection("Cors:AllowedOrigins")
-    .Get<string[]>() ?? [];
-
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
-        policy.WithOrigins(allowedOrigins)
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials()));
+        policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
-// ── Event Bus ─────────────────────────────────────────────────────────────────
-builder.Services.AddScoped<IEventBus, InMemoryEventBus>();
+Assembly[] moduleAssemblies =
+[
+    typeof(DomainAssemblyMarker).Assembly,
+    typeof(ApplicationAssemblyMarker).Assembly,
+    typeof(InfrastructureAssemblyMarker).Assembly,
+    Assembly.GetExecutingAssembly(),
+];
 
-// ── Modules ───────────────────────────────────────────────────────────────────
-builder.Services
-    .AddIdentityModule()
-    .AddCharacterModule()
-    .AddInventoryModule()
-    .AddTasksModule()
-    .AddExpensesModule()
-    .AddRewardsModule()
-    .AddNotificationsModule()
-    .AddSchedulerModule();
-
-// ── API docs ──────────────────────────────────────────────────────────────────
+builder.Services.AddModules(builder.Configuration, moduleAssemblies);
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 
-// ─────────────────────────────────────────────────────────────────────────────
+builder.Host.UseWolverine(opts =>
+{
+    // Enlist Wolverine in EF Core transactions so published messages are
+    // written to the outbox atomically with DbContext.SaveChangesAsync().
+    opts.UseEntityFrameworkCoreTransactions();
+
+    // Store outbox/inbox envelopes in the same PostgreSQL database.
+    opts.PersistMessagesWithPostgresql(
+        builder.Configuration.GetConnectionString("fourlivingstory")!,
+        schemaName: "wolverine");
+
+    // Scan Application and Infrastructure assemblies for message handlers.
+    opts.Discovery.IncludeAssembly(typeof(ApplicationAssemblyMarker).Assembly);
+    opts.Discovery.IncludeAssembly(typeof(InfrastructureAssemblyMarker).Assembly);
+});
 
 var app = builder.Build();
 
-// ── Database init ─────────────────────────────────────────────────────────────
-// TODO: replace with MigrateAsync() once EF Core migrations are in place.
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await db.Database.EnsureCreatedAsync();
+    await db.Database.EnsureCreatedAsync(); // TODO: replace with MigrateAsync()
 }
 
-// ── Middleware ────────────────────────────────────────────────────────────────
 app.UseExceptionHandler();
-
-if (app.Environment.IsDevelopment())
-    app.MapOpenApi();
-
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
-
-// ── Endpoints ─────────────────────────────────────────────────────────────────
 app.MapDefaultEndpoints();
-
-app.MapNotificationsModule()
-   .MapCharacterModule()
-   .MapInventoryModule()
-   .MapTasksModule()
-   .MapExpensesModule();
+app.MapModules(moduleAssemblies);
 
 app.Run();
