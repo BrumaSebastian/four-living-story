@@ -15,6 +15,7 @@
   <Project Path="FourLivingStory.AppHost/FourLivingStory.AppHost.csproj" />
   <Project Path="FourLivingStory.Application/FourLivingStory.Application.csproj" />
   <Project Path="FourLivingStory.Domain/FourLivingStory.Domain.csproj" />
+  <Project Path="FourLivingStory.Gateway/FourLivingStory.Gateway.csproj" />
   <Project Path="FourLivingStory.Infrastructure/FourLivingStory.Infrastructure.csproj" />
   <Project Path="FourLivingStory.ServiceDefaults/FourLivingStory.ServiceDefaults.csproj" />
   <Project Path="FourLivingStory.Tests/FourLivingStory.Tests.csproj" />

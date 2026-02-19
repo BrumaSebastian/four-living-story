@@ -35,6 +35,11 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.14.0" />
   </ItemGroup>
 
+  <ItemGroup Label="Proxy">
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.3.0" />
+    <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
+  </ItemGroup>
+
   <ItemGroup Label="Wolverine">
     <PackageVersion Include="WolverineFx" Version="5.16.2" />
     <PackageVersion Include="WolverineFx.EntityFrameworkCore" Version="5.16.2" />

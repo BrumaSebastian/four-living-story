@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FourLivingStory.ApiService\FourLivingStory.ApiService.csproj" />
+    <ProjectReference Include="..\FourLivingStory.Gateway\FourLivingStory.Gateway.csproj" />
     <ProjectReference Include="..\FourLivingStory.Web\FourLivingStory.Web.csproj" />
   </ItemGroup>
 
