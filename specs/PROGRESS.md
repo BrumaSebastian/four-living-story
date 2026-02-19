@@ -15,12 +15,17 @@
 - [x] Item enhancement system documented (see features/items.md)
 - [x] Modular monolith architecture defined (see MODULES.md)
 - [x] PostgreSQL + EF Core wired up (AppDbContext, Aspire.Npgsql.EntityFrameworkCore.PostgreSQL)
-- [x] In-process event bus (IEventBus / IEventHandler<T> / InMemoryEventBus)
 - [x] All 8 modules scaffolded: Identity, Character, Inventory, Tasks, Expenses, Rewards, Notifications, Scheduler
 - [x] JWT Bearer auth configured in ApiService (Logto OIDC)
 - [x] SSE notifications (NotificationHub singleton, GET /notifications/stream)
 - [x] Daily reset cron job (DailyResetJob BackgroundService)
 - [x] RewardCalculator (stateless singleton, difficulty tiers, overachievement bonus)
+- [x] Modular monolith split into Domain / Application / Infrastructure / ApiService layers
+- [x] Module discovery via reflection (AddModules / MapModules — no manual wiring in Program.cs)
+- [x] Wolverine event bus with PostgreSQL outbox (replaces InMemoryEventBus)
+- [x] IEventBus / IEventHandler ports in Application; WolverineEventBus adapter in Infrastructure
+- [x] Async event bus (IEventBus.PublishAsync returns ValueTask)
+- [x] TimeProvider injected into DailyResetJob (testable, no DateTime.UtcNow)
 - [x] Blazor WASM hosted setup: Web.Client (WASM) + Web (thin host)
 - [x] OIDC/PKCE auth configured in Web.Client (Logto)
 - [x] Dynamic ApiService URL discovery via GET /_config
@@ -56,7 +61,7 @@ See FEATURES.md for full feature tracking.
 - **Races**: Human, Feline, Fairy
 - **Backend structure**: Modular monolith — 8 modules (Identity, Character, Inventory, Tasks, Expenses, Rewards, Notifications, Scheduler)
 - **No MediatR, no repository pattern**: services use EF Core directly, endpoints use Minimal API
-- **Event bus**: in-process synchronous IEventBus for cross-module communication
+- **Event bus**: Wolverine with PostgreSQL outbox — messages committed atomically with DbContext; async (ValueTask); convention-based handler discovery
 - **SSE**: Notifications module manages Server-Sent Events for real-time push
-- **Cron jobs**: Scheduler module uses IHostedService + PeriodicTimer (no Quartz.NET)
+- **Cron jobs**: Scheduler module uses IHostedService + TimeProvider (no Quartz.NET)
 - **DB schemas**: one PostgreSQL schema per module; no cross-schema FK constraints
