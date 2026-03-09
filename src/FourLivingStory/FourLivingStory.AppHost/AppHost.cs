@@ -36,7 +36,7 @@ var apiService = builder.AddProject<Projects.FourLivingStory_ApiService>("apiser
     .WithReference(db)
     .WaitFor(db)
     .WithEnvironment("Logto__Authority", logtoAuthority)
-    .WithEnvironment("Logto__Audience", "http://localhost:7509/");
+    .WithEnvironment("Logto__Audience", builder.Configuration["Logto:Audience"] ?? "");
 
 var web = builder.AddProject<Projects.FourLivingStory_Web>("webfrontend")
     .WithHttpHealthCheck("/health")
