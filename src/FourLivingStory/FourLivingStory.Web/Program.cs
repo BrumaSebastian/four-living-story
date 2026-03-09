@@ -15,6 +15,10 @@ var apiServiceUrl = builder.Configuration["services:apiservice:https:0"]
     ?? builder.Configuration["services:apiservice:http:0"]
     ?? "https://localhost:7001";
 
+// ── Logto config (injected by AppHost via env vars) ───────────────────────────
+var logtoAuthority = builder.Configuration["Logto:Authority"] ?? "";
+var logtoClientId = builder.Configuration["Logto:ClientId"] ?? "";
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 var app = builder.Build();
@@ -30,9 +34,13 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 
-// Exposes ApiService URL to the WASM client.
-app.MapGet("/_config", () => new { ApiServiceUrl = apiServiceUrl })
-    .WithName("GetClientConfig");
+// Exposes runtime config to the WASM client.
+app.MapGet("/_config", () => new
+{
+    ApiServiceUrl = apiServiceUrl,
+    LogtoAuthority = logtoAuthority,
+    LogtoClientId = logtoClientId
+}).WithName("GetClientConfig");
 
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
