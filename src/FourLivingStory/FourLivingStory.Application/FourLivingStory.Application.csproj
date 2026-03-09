@@ -8,6 +8,9 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\FourLivingStory.Domain\FourLivingStory.Domain.csproj" />
   </ItemGroup>
 </Project>

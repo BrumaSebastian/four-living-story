@@ -1,32 +1,26 @@
 <Project>
-
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
-
   <ItemGroup Label="Aspire">
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.1.0" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="13.1.0" />
     <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.1.0" />
   </ItemGroup>
-
   <ItemGroup Label="AspNetCore">
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
   </ItemGroup>
-
   <ItemGroup Label="EntityFramework">
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
   </ItemGroup>
-
   <ItemGroup Label="Extensions">
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.1.0" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.1.0" />
   </ItemGroup>
-
   <ItemGroup Label="OpenTelemetry">
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
@@ -34,23 +28,19 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.14.0" />
   </ItemGroup>
-
   <ItemGroup Label="Proxy">
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.3.0" />
     <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
   </ItemGroup>
-
   <ItemGroup Label="Wolverine">
     <PackageVersion Include="WolverineFx" Version="5.16.2" />
     <PackageVersion Include="WolverineFx.EntityFrameworkCore" Version="5.16.2" />
     <PackageVersion Include="WolverineFx.Postgresql" Version="5.16.2" />
   </ItemGroup>
-
   <ItemGroup Label="Testing">
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
     <PackageVersion Include="xunit.v3" Version="3.0.1" />
   </ItemGroup>
-
 </Project>

@@ -3,7 +3,14 @@
     "allow": [
       "Bash(git push:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "WebSearch",
+      "Bash(dotnet build:*)",
+      "WebFetch(domain:www.nuget.org)",
+      "Skill(hookify:help)",
+      "Bash(python3:*)",
+      "Bash(xargs grep:*)",
+      "Bash(xargs cat:*)"
     ]
   }
 }
